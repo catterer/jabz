@@ -1,4 +1,5 @@
 #include <jabz.hh>
+#include <parser.hh>
 
 namespace jabz {
 class Ex: public std::runtime_error {
@@ -7,16 +8,19 @@ public:
   Ex(Error&& e): std::runtime_error(e.reason.c_str()), err{e} {}
 };
 
-Error pack(const std::string& in) {
+Error pack(const std::string& in, std::string& out) {
   json_error_t e;
-  json_t* j = json_loads(in.c_str(), JSON_REJECT_DUPLICATES, &e);
+  const json_t* j = json_loads(in.c_str(), JSON_REJECT_DUPLICATES, &e);
   if (!j)
     return {e};
-  return {};
+  return pack(j, out);
 }
 
-Error pack(json_t* obj) {
+Error pack(const json_t* obj, std::string& out) {
   try {
+    Stream js{};
+    Parser().xlate(obj, js);
+    out = js.str();
   } catch(Ex& ex) {
     return ex.err;
   }

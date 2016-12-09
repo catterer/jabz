@@ -9,14 +9,15 @@ class Error {
 public:
   enum class Code: unsigned {
     OK = 0,
-    InvalidJson     = 100,
+    InvalidJson       = 100,
+    UnknownDirective  = 200,
   };
 
   Code          code{Code::OK};
   std::string   reason{};
 
   explicit operator bool() const {
-    return code == Code::OK;
+    return code != Code::OK;
   }
 
   Error() {}
@@ -38,6 +39,6 @@ public:
   }
 };
 
-Error pack(const std::string& in);
-Error pack(json_t* in);
+Error pack(const std::string& in, std::string& out);
+Error pack(const json_t* in, std::string& out);
 }
