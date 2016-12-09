@@ -46,16 +46,16 @@ class Parser {
   TypeConf tcfg{};
 
   virtual void   xlate_TODO(const json_t* obj, Stream& out) {
-    throw Error(Error::Code::UnknownDirective, "TODO");
+    throw Ex(Error::Code::UnknownDirective, "TODO");
   }
   virtual void   xlate_real(double val, Stream& out) {
     tcfg.write(val, out);
   }
   virtual void   xlate_bool(bool val, Stream& out) {
-    throw Error(Error::Code::UnknownDirective, "how to convert bool?");
+    throw Ex(Error::Code::UnknownDirective, "how to convert bool?");
   }
   virtual void   xlate_null(Stream& out) {
-    throw Error(Error::Code::UnknownDirective, "how to convert NULL?");
+    throw Ex(Error::Code::UnknownDirective, "how to convert NULL?");
   }
 public:
   Parser() {}

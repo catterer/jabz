@@ -5,12 +5,6 @@ namespace jabz {
 
 constexpr auto json_flags = JSON_REJECT_DUPLICATES;
 
-class Ex: public std::runtime_error {
-public:
-  Error err{};
-  Ex(Error&& e): std::runtime_error(e.reason.c_str()), err{e} {}
-};
-
 Error pack(const std::string& in, std::string& out) {
   json_error_t e;
   const json_t* j = json_loads(in.c_str(), json_flags, &e);

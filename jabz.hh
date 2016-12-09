@@ -39,6 +39,13 @@ public:
   }
 };
 
+class Ex: public std::runtime_error {
+public:
+  Error err{};
+  Ex(Error&& e): std::runtime_error(e.reason.c_str()), err{e} {}
+  Ex(Error::Code c, std::string&& r): Ex(Error{c, std::move(r)}) {}
+};
+
 Error pack(const std::string& in, std::string& out);
 Error pack(FILE* f, std::string& out);
 Error pack(const json_t* in, std::string& out);
