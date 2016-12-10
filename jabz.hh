@@ -10,7 +10,9 @@ public:
   enum class Code: unsigned {
     OK = 0,
     InvalidJson       = 100,
-    UnknownDirective  = 200,
+    UnsupportedType   = 200,
+    UnknownDirective  = 300,
+    TypeError         = 400,
   };
 
   Code          code{Code::OK};
