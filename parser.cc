@@ -1,11 +1,44 @@
+#include <functional>
 #include <parser.hh>
 
 namespace jabz {
 
+class Lps {
+  const TypeConf tcfg{};
+  Stream& s;
+  std::iostream::pos_type start{};
+  std::iostream::pos_type data_off{};
+public:
+  Lps(const TypeConf& tcfg_, Stream& s_): tcfg{tcfg_}, s{s_} {}
+  Lps(const Lps& other) = delete;
+  void open() {
+    start = s.tellp();
+    tcfg.write(Stream::pos_type(0), s);
+    data_off = s.tellp();
+  }
+  void close() {
+    const auto end = s.tellp();
+    s.seekp(start);
+    tcfg.write(Stream::pos_type(end - data_off), s);
+    s.seekp(end);
+  }
+
+  using WrapCb = std::function<void(Stream& s)>;
+  void wrap(WrapCb cb) {
+    open();
+    cb(s);
+    close();
+  }
+};
+
+void Parser::xlate(json_t* obj, Stream& out) {
+  xlate((const json_t*) obj, out);
+}
+
 void Parser::xlate(const json_t* obj, Stream& out) {
   switch (json_typeof(obj)) {
     case JSON_OBJECT:   return xlate_obj(obj, out);
-    case JSON_ARRAY:    return xlate_TODO(obj, out);
+    case JSON_ARRAY:    return xlate_arr(obj, out);
     case JSON_STRING:   return xlate<std::string>({json_string_value(obj)}, out);
     case JSON_INTEGER:  return xlate<uint32_t>(json_integer_value(obj), out);
     case JSON_REAL:     return xlate<float>((float)json_real_value(obj), out);
@@ -33,5 +66,15 @@ void Parser::xlate_obj(const json_t* obj, Stream& out) {
         throw Ex(Error::Code::UnknownDirective,
             std::string("Don't know how to process '") + std::string(key) + std::string("'"));
   }
+}
+
+void Parser::xlate_arr(const json_t* a, Stream& out) {
+  Lps(tcfg, out).wrap(
+        [this, &a] (Stream& s) {
+          size_t i;
+          json_t* e;
+          json_array_foreach((json_t*)a, i, e)
+            xlate(e, s);
+        });
 }
 }
