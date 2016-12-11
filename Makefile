@@ -1,4 +1,6 @@
+parser := parser.o
 ljabz := jabz.a
+jabz := jabz.o
 jabztool := jabz
 
 LDFLAGS=-ljansson
@@ -10,9 +12,15 @@ LINK := $(CC) $(CPPFLAGS) $(LDFLAGS)
 $(jabztool): $(ljabz)
 	$(CC) $(CPPFLAGS) $(LDFLAGS) jabz_tool.cc $(ljabz) -o $(jabztool)
 
-$(ljabz):
-	$(CC) $(CPPFLAGS) $(LDFLAGS) jabz.cc -c -o $(ljabz)
+$(ljabz): $(parser) $(jabz)
+	$(LD) -r $(parser) $(jabz) -o $(ljabz)
+
+$(parser):
+	$(CC) $(CPPFLAGS) $(LDFLAGS) parser.cc -c -o $(parser)
+
+$(jabz):
+	$(CC) $(CPPFLAGS) $(LDFLAGS) jabz.cc -c -o $(jabz)
 
 all: $(ljabz) $(jabztool)
 clean:
-	rm -rf $(ljabz) $(jabztool)
+	rm -rf $(ljabz) $(jabztool) $(parser) $(jabz)
