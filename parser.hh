@@ -4,8 +4,6 @@
 #include <sstream>
 #include <error.hh>
 
-#include <iostream>
-
 namespace jabz {
 
 class Stream: public std::stringstream {

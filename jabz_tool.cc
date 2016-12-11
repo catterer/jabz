@@ -6,6 +6,6 @@ int main() {
   if (e)
     std::cerr << e << std::endl;
   else
-    std::cout << res << std::endl;
+    std::cout << res;
   return 0;
 }
