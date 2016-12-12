@@ -15,3 +15,4 @@ function run_test {
 }  
 
 run_test 1
+run_test num

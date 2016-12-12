@@ -3,6 +3,19 @@
 
 namespace jabz {
 
+    template<typename T>
+    static void ext_num(Parser& p, const json_t* obj, Stream& out) {
+        if (json_typeof(obj) != JSON_INTEGER)
+            throw Ex(Error::Code::TypeError, "Wrong type for u64: int required");
+        p.xlate<T>((T)json_integer_value(obj), out);
+    }
+
+    const ExtensionPack std {
+        {"u64", ext_num<uint64_t>},
+        {"u16", ext_num<uint16_t>},
+        {"u8", ext_num<uint8_t>}
+    };
+
     class Lps {
         const TypeConf tcfg{};
         Stream& s;
@@ -60,11 +73,16 @@ namespace jabz {
         json_object_foreach((json_t*)obj, key_, val) {
             const char* comment = strchr(key_, '#');
             auto key = std::string(key_, comment ? (comment - key_) : strlen(key_));
+            if (!key.size()) {
+                xlate(obj, out);
+                continue;
+            }
 
-            if (key == "u64")   xlate_u64(val, out);
-            else
+            auto exti = ext.find(key);
+            if (exti == ext.end())
                 throw Ex(Error::Code::UnknownDirective,
                         std::string("Don't know how to process '") + std::string(key) + std::string("'"));
+            exti->second(*this, val, out);
         }
     }
 
