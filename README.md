@@ -9,7 +9,7 @@ Use extensions interface to provide new data types.
 
 Json integer translated to 32-bit.
 
-Json float translate to float.
+Json float translated to float.
 
 ###Examples
 
