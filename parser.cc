@@ -74,7 +74,7 @@ namespace jabz {
             const char* comment = strchr(key_, '#');
             auto key = std::string(key_, comment ? (comment - key_) : strlen(key_));
             if (!key.size()) {
-                xlate(obj, out);
+                xlate(val, out);
                 continue;
             }
 
