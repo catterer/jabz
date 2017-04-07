@@ -3,7 +3,7 @@
 Describe binary data using JSON format.
 Use extensions interface to provide new data types.
 
-###Basic syntax
+### Basic syntax
 
 [ ] stands for LPS with 32-bit length.
 
@@ -11,7 +11,7 @@ Json integer translated to 32-bit.
 
 Json float translated to float.
 
-###Examples
+### Examples
 
 In:
 ```JSON
